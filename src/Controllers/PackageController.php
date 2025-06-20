@@ -9,6 +9,9 @@ use Azuriom\Plugin\Shop\Models\Package;
 use Azuriom\Plugin\Shop\Models\Variable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Azuriom\Models\User;
 
 class PackageController extends Controller
 {
@@ -51,6 +54,16 @@ class PackageController extends Controller
         }
 
         $user = $request->user();
+
+        if ($user === null && setting('shop.guest_checkout', false)) {
+            $this->validate($request, [
+                'nickname' => ['required', 'string', 'max:255'],
+            ]);
+
+            $user = $this->getGuestUser($request->input('nickname'));
+
+            auth()->login($user);
+        }
         $cart = Cart::fromSession($request->session());
 
         if ($package->getMaxQuantity() < 1 || $package->category->hasReachLimit($user)) {
@@ -136,5 +149,24 @@ class PackageController extends Controller
         abort_if($package->countUserPurchases() === 0, 403);
 
         return $package->downloadFile($file, $fileName);
+    }
+
+    /**
+     * Получить или создать гостевого пользователя по нику.
+     */
+    private function getGuestUser(string $nickname): User
+    {
+        $slug = Str::slug(mb_strtolower($nickname));
+        $email = 'guest-'.$slug.'@example.com';
+
+        return User::firstOrCreate(
+            ['email' => $email],
+            [
+                'name' => $nickname,
+                'password' => Hash::make(Str::random(16)),
+                'email_verified_at' => now(),
+                'avatar' => 'https://www.gravatar.com/avatar/?d=mp',
+            ]
+        );
     }
 }

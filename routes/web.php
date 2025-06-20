@@ -30,7 +30,10 @@ Route::resource('categories', CategoryController::class)->only('show')->scoped([
 
 Route::resource('packages', PackageController::class)->only('show');
 
-Route::prefix('packages/{package}')->name('packages.')->middleware('auth')->group(function () {
+Route::prefix('packages/{package}')
+    ->name('packages.')
+    ->middleware(setting('shop.guest_checkout', false) ? [] : 'auth')
+    ->group(function () {
     Route::post('/buy', [PackageController::class, 'buy'])->name('buy');
     Route::get('/options', [PackageController::class, 'showVariables']);
     Route::post('/options', [PackageController::class, 'buy'])->name('variables');
