@@ -57,7 +57,13 @@ class Payment extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'price', 'currency', 'status', 'gateway_type', 'transaction_id', 'user_id',
+        'price',
+        'currency',
+        'status',
+        'gateway_type',
+        'transaction_id',
+        'user_id',
+        'guest_name',
     ];
 
     /**
@@ -148,15 +154,12 @@ class Payment extends Model
             rescue(fn () => $this->createDiscordWebhook()->send($webhookUrl));
         }
 
-        rescue(fn () => $this->user->notify(new PaymentPaidNotification($this)));
+        if ($this->user !== null) {
+            rescue(fn () => $this->user->notify(new PaymentPaidNotification($this)));
+        }
 
-        // Если покупку совершил гость, удаляем его учётную запись
-        if (shop_is_guest($this->user)) {
-            if (app()->bound('session')) {
-                app('session')->forget('shop_guest_id');
-            }
-
-            $this->user->delete();
+        if ($this->guest_name !== null && app()->bound('session')) {
+            app('session')->forget('shop_guest_name');
         }
     }
 
@@ -228,7 +231,7 @@ class Payment extends Model
                 'gateway' => $this->getTypeName(),
                 'id' => $transactionId ?? trans('messages.none'),
             ]))
-            ->author($this->user->name, null, $this->user->getAvatar())
+            ->author($this->user->name ?? $this->guest_name, null, $this->user?->getAvatar())
             ->url(route('shop.admin.payments.show', $this))
             ->color($color)
             ->footer('Azuriom v'.Azuriom::version())

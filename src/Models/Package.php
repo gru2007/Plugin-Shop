@@ -355,33 +355,39 @@ class Package extends Model implements Buyable
     {
         $user = $item->payment->user;
 
-        $this->dispatchCommands($renewal ? 'renewal' : 'purchase', $item);
-
-        if ($this->role !== null && ! $this->role->is_admin && $user->role->power < $this->role->power) {
-            $user->role()->associate($this->role)->save();
+        if ($user === null) {
+            $user = new User(['name' => $item->payment->guest_name]);
         }
 
-        if ($this->money > 0) {
-            $user->addMoney($this->money * $item->quantity);
+        $this->dispatchCommands($renewal ? 'renewal' : 'purchase', $item, $user);
+
+        if ($item->payment->user !== null) {
+            if ($this->role !== null && ! $this->role->is_admin && $user->role->power < $this->role->power) {
+                $user->role()->associate($this->role)->save();
+            }
+
+            if ($this->money > 0) {
+                $user->addMoney($this->money * $item->quantity);
+            }
+
+            if ($this->hasGiftcard()) {
+                $balance = $this->giftcard_balance > 0
+                    ? $this->giftcard_balance
+                    : $item->price;
+
+                $giftcard = Giftcard::create([
+                    'code' => Giftcard::randomCode(),
+                    'balance' => $balance,
+                    'original_balance' => $balance,
+                    'start_at' => now(),
+                    'expire_at' => now()->addYear(),
+                ]);
+
+                $giftcard->notifyUser($user);
+            }
+
+            $this->sendFiles($user);
         }
-
-        if ($this->hasGiftcard()) {
-            $balance = $this->giftcard_balance > 0
-                ? $this->giftcard_balance
-                : $item->price;
-
-            $giftcard = Giftcard::create([
-                'code' => Giftcard::randomCode(),
-                'balance' => $balance,
-                'original_balance' => $balance,
-                'start_at' => now(),
-                'expire_at' => now()->addYear(),
-            ]);
-
-            $giftcard->notifyUser($user);
-        }
-
-        $this->sendFiles($user);
 
         event(new PackageDelivered($user, $this, $item->quantity));
     }
@@ -403,15 +409,19 @@ class Package extends Model implements Buyable
 
     public function expire(PaymentItem $item, string $trigger = 'expiration'): void
     {
-        $this->dispatchCommands($trigger, $item);
+        $user = $item->payment->user;
+
+        if ($user === null) {
+            $user = new User(['name' => $item->payment->guest_name]);
+        }
+
+        $this->dispatchCommands($trigger, $item, $user);
 
         if ($this->expiredRole === null || $this->expiredRole->is_admin) {
             return;
         }
 
-        $user = $item->payment->user;
-
-        if (! $user->isAdmin()) {
+        if ($item->payment->user !== null && ! $user->isAdmin()) {
             $user->role()->associate($this->expiredRole)->save();
         }
     }
@@ -424,9 +434,8 @@ class Package extends Model implements Buyable
         $query->where('is_enabled', true)->orderBy('position');
     }
 
-    public function dispatchCommands(string $trigger, PaymentItem $item): void
+    public function dispatchCommands(string $trigger, PaymentItem $item, User $user): void
     {
-        $user = $item->payment->user;
 
         $serverCommands = collect($this->commands)
             ->merge(($json = setting('shop.commands')) ? json_decode($json, true) : [])

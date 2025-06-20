@@ -112,6 +112,7 @@ class PaymentManager
             'gateway_type' => $gatewayId,
             'status' => 'pending',
             'transaction_id' => $paymentId,
+            'guest_name' => session('shop_guest_name'),
         ]);
 
         foreach ($cart->content() as $item) {

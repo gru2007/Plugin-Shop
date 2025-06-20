@@ -47,15 +47,6 @@ if (! function_exists('shop_allow_guests')) {
     }
 }
 
-if (! function_exists('shop_is_guest')) {
-    /**
-     * Проверяет, является ли пользователь гостем.
-     */
-    function shop_is_guest($user): bool
-    {
-        return (bool) ($user->is_guest ?? false);
-    }
-}
 
 if (! function_exists('currency')) {
     /**

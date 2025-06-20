@@ -3,10 +3,9 @@
 namespace Azuriom\Plugin\Shop\Controllers;
 
 use Azuriom\Http\Controllers\Controller;
-use Azuriom\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
+use Azuriom\Models\User;
 
 /**
  * Контроллер ввода ника для гостевых покупок.
@@ -28,15 +27,11 @@ class GuestController extends Controller
             'name' => ['required', 'string', 'max:255'],
         ]);
 
-        // Создаём временного пользователя для гостевой покупки
-        $user = User::create([
-            'name' => $data['name'],
-            'password' => bcrypt(Str::random(10)),
-            'is_guest' => true,
-        ]);
+        // Сохраняем ник в сессии и считаем пользователя гостем
+        $request->session()->put('shop_guest_name', $data['name']);
 
-        $request->session()->put('shop_guest_id', $user->id);
-        Auth::login($user);
+        // Помещаем временного пользователя в Auth только на текущий запрос
+        Auth::setUser(new User(['name' => $data['name']]));
 
         return redirect()->intended(route('shop.home'));
     }
