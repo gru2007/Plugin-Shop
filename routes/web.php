@@ -46,13 +46,19 @@ Route::prefix('offers')->name('offers.')->middleware('verified')->group(function
     Route::post('/{offer:id}/{gateway:type}', [OfferController::class, 'pay'])->name('pay');
 });
 
-Route::prefix('cart')->name('cart.')->middleware('auth')->group(function () {
+// Группа маршрутов корзины. При включенной гостевой покупке убираем требование авторизации
+Route::prefix('cart')
+    ->name('cart.')
+    ->middleware(setting('shop.guest_checkout', false) ? [] : 'auth')
+    ->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::post('/', [CartController::class, 'update'])->name('update');
     // TODO Match multiple methods is not really good here...
     Route::match(['GET', 'POST'], '/remove/{package}', [CartController::class, 'remove'])->name('remove');
     Route::post('/clear', [CartController::class, 'clear'])->name('clear');
-    Route::post('/payment', [CartController::class, 'payment'])->name('payment')->middleware('auth');
+    Route::post('/payment', [CartController::class, 'payment'])
+        ->name('payment')
+        ->middleware(setting('shop.guest_checkout', false) ? [] : 'auth');
 
     Route::prefix('coupons')->name('coupons.')->group(function () {
         Route::post('/add', [CouponController::class, 'add'])->name('add');
@@ -75,8 +81,9 @@ Route::prefix('subscriptions')->name('subscriptions.')->group(function () {
     Route::delete('/{subscription}', [SubscriptionController::class, 'cancel'])->middleware('auth')->name('destroy');
 });
 
+// Маршруты платежей. Для гостевых покупок авторизация не требуется
 Route::prefix('payments')->name('payments.')->group(function () {
-    Route::middleware(['auth', 'verified'])->group(function () {
+    Route::middleware(setting('shop.guest_checkout', false) ? [] : ['auth', 'verified'])->group(function () {
         Route::get('/payment', [PaymentController::class, 'payment'])->name('payment');
         Route::post('/{gateway:type}/pay', [PaymentController::class, 'pay'])->name('pay');
     });
