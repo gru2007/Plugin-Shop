@@ -70,6 +70,7 @@ return [
         'title' => 'Cart',
         'success' => 'Your purchase has been successfully completed.',
         'guest' => 'You must be logged in to make a purchase.',
+        'guest_link' => 'Продолжить без регистрации',
         'empty' => 'Your cart is empty.',
         'checkout' => 'Checkout',
         'clear' => 'Clear the cart',
@@ -147,5 +148,12 @@ return [
         'add' => 'Add a gift card',
         'notification' => 'You received a giftcard, the code is :code (:balance).',
         'pending' => 'A payment has already started for this giftcard. Complete the payment or wait a few minutes.',
+    ],
+
+    // Текст для гостевых покупок
+    'guest' => [
+        'title' => 'Покупка без регистрации',
+        'name' => 'Введите ваш ник',
+        'continue' => 'Продолжить',
     ],
 ];

@@ -37,6 +37,16 @@ if (! function_exists('use_site_money')) {
     }
 }
 
+if (! function_exists('shop_allow_guests')) {
+    /**
+     * Проверяет, разрешены ли гостевые покупки.
+     */
+    function shop_allow_guests(): bool
+    {
+        return setting('shop.allow_guests', false);
+    }
+}
+
 if (! function_exists('currency')) {
     /**
      * Return the active currency on the shop.

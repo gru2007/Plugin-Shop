@@ -70,6 +70,7 @@ return [
         'title' => 'Panier',
         'success' => 'Votre achat a été effectué avec succès.',
         'guest' => 'Vous devez être connecté pour effectuer un achat.',
+        'guest_link' => 'Продолжить без регистрации',
         'empty' => 'Votre panier est vide.',
         'checkout' => 'Procéder au paiement',
         'clear' => 'Vider le panier',
@@ -147,5 +148,12 @@ return [
         'add' => 'Utiliser une carte cadeau',
         'notification' => 'Vous avez reçu une carte cadeau, son code est : :code (:balance).',
         'pending' => 'Un paiement est déjà en cours pour cette carte cadeau. Complétez le paiement ou attendez un peu.',
+    ],
+
+    // Texte pour les achats invités (на русском)
+    'guest' => [
+        'title' => 'Покупка без регистрации',
+        'name' => 'Введите ваш ник',
+        'continue' => 'Продолжить',
     ],
 ];

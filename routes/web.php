@@ -9,6 +9,7 @@ use Azuriom\Plugin\Shop\Controllers\PackageController;
 use Azuriom\Plugin\Shop\Controllers\PaymentController;
 use Azuriom\Plugin\Shop\Controllers\ProfileController;
 use Azuriom\Plugin\Shop\Controllers\SubscriptionController;
+use Azuriom\Plugin\Shop\Controllers\GuestController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,13 +25,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [CategoryController::class, 'index'])->name('home');
+Route::middleware('guest')->group(function () {
+    Route::get('/guest', [GuestController::class, 'create'])->name('guest');
+    Route::post('/guest', [GuestController::class, 'store'])->name('guest.store');
+});
 Route::resource('categories', CategoryController::class)->only('show')->scoped([
     'category' => 'slug',
 ]);
 
 Route::resource('packages', PackageController::class)->only('show');
 
-Route::prefix('packages/{package}')->name('packages.')->middleware('auth')->group(function () {
+Route::prefix('packages/{package}')->name('packages.')->middleware('shop.auth')->group(function () {
     Route::post('/buy', [PackageController::class, 'buy'])->name('buy');
     Route::get('/options', [PackageController::class, 'showVariables']);
     Route::post('/options', [PackageController::class, 'buy'])->name('variables');
@@ -43,7 +48,7 @@ Route::prefix('offers')->name('offers.')->middleware('verified')->group(function
     Route::post('/{offer:id}/{gateway:type}', [OfferController::class, 'pay'])->name('pay');
 });
 
-Route::prefix('cart')->name('cart.')->middleware('auth')->group(function () {
+Route::prefix('cart')->name('cart.')->middleware('shop.auth')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::post('/', [CartController::class, 'update'])->name('update');
     // TODO Match multiple methods is not really good here...
@@ -73,7 +78,7 @@ Route::prefix('subscriptions')->name('subscriptions.')->group(function () {
 });
 
 Route::prefix('payments')->name('payments.')->group(function () {
-    Route::middleware(['auth', 'verified'])->group(function () {
+    Route::middleware(['shop.auth', 'verified'])->group(function () {
         Route::get('/payment', [PaymentController::class, 'payment'])->name('payment');
         Route::post('/{gateway:type}/pay', [PaymentController::class, 'pay'])->name('pay');
     });
@@ -82,6 +87,6 @@ Route::prefix('payments')->name('payments.')->group(function () {
     Route::get('/{gateway:type}/failure', [PaymentController::class, 'failure'])->name('failure');
 });
 
-Route::get('/profile', [ProfileController::class, 'index'])->middleware('auth')->name('profile');
+Route::get('/profile', [ProfileController::class, 'index'])->middleware('shop.auth')->name('profile');
 
-Route::post('/giftcards/add', [GiftcardController::class, 'add'])->middleware('auth')->name('giftcards.add');
+Route::post('/giftcards/add', [GiftcardController::class, 'add'])->middleware('shop.auth')->name('giftcards.add');

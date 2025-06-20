@@ -15,6 +15,7 @@ use Azuriom\Plugin\Shop\Models\Offer;
 use Azuriom\Plugin\Shop\Models\Package;
 use Azuriom\Plugin\Shop\Observers\UserObserver;
 use Azuriom\Plugin\Shop\Payment\PaymentManager;
+use Azuriom\Plugin\Shop\Middleware\ShopAuth;
 use Azuriom\Plugin\Shop\View\Composers\ShopAdminDashboardComposer;
 use Azuriom\Plugin\Shop\View\Composers\ShopAdminUserComposer;
 use Illuminate\Console\Scheduling\Schedule;
@@ -56,6 +57,9 @@ class ShopServiceProvider extends BasePluginServiceProvider
         $this->registerUserNavigation();
 
         $this->registerAdminNavigation();
+
+        // Регистрация middleware для гостевых покупок
+        $this->routeMiddleware('shop.auth', \Azuriom\Plugin\Shop\Middleware\ShopAuth::class);
 
         $this->registerSchedule();
 

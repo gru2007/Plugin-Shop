@@ -70,6 +70,9 @@
             @else
                 <div class="alert alert-info" role="alert">
                     {{ trans('shop::messages.cart.guest') }}
+                    @if(shop_allow_guests())
+                        <a href="{{ route('shop.guest') }}" class="btn btn-link p-0">{{ trans('shop::messages.cart.guest_link') }}</a>
+                    @endif
                 </div>
             @endauth
         </div>
