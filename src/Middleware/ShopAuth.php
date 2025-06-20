@@ -29,7 +29,14 @@ class ShopAuth
             return redirect()->route('shop.guest');
         }
 
-        Auth::loginUsingId($guestId);
+        $user = \Azuriom\Models\User::find($guestId);
+
+        if ($user === null || shop_is_guest($user) === false) {
+            $request->session()->forget('shop_guest_id');
+            return redirect()->route('shop.guest');
+        }
+
+        Auth::login($user);
 
         return $next($request);
     }

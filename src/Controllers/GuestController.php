@@ -28,9 +28,11 @@ class GuestController extends Controller
             'name' => ['required', 'string', 'max:255'],
         ]);
 
+        // Создаём временного пользователя для гостевой покупки
         $user = User::create([
             'name' => $data['name'],
             'password' => bcrypt(Str::random(10)),
+            'is_guest' => true,
         ]);
 
         $request->session()->put('shop_guest_id', $user->id);

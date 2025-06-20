@@ -149,6 +149,15 @@ class Payment extends Model
         }
 
         rescue(fn () => $this->user->notify(new PaymentPaidNotification($this)));
+
+        // Если покупку совершил гость, удаляем его учётную запись
+        if (shop_is_guest($this->user)) {
+            if (app()->bound('session')) {
+                app('session')->forget('shop_guest_id');
+            }
+
+            $this->user->delete();
+        }
     }
 
     public function revoke(string $trigger)
