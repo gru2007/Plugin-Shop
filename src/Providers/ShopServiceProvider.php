@@ -45,6 +45,9 @@ class ShopServiceProvider extends BasePluginServiceProvider
     {
         $this->registerPolicies();
 
+        // Регистрация middleware для гостевых покупок
+        $this->app['router']->aliasMiddleware('shop.user', \Azuriom\Plugin\Shop\Middleware\GuestUser::class);
+
         $this->loadViews();
 
         $this->loadTranslations();

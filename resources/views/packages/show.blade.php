@@ -68,9 +68,68 @@
                     </form>
                 @endif
             @else
-                <div class="alert alert-info" role="alert">
-                    {{ trans('shop::messages.cart.guest') }}
-                </div>
+                @if(session()->has('shop.guest_user_id'))
+                    @if($package->isSubscription())
+                        @if($package->isUserSubscribed())
+                            <a href="{{ route('shop.profile') }}" class="btn btn-primary">
+                                {{ trans('shop::messages.actions.manage') }}
+                            </a>
+                        @else
+                            <form action="{{ route('shop.subscriptions.select', $package) }}" method="POST" class="form-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-primary">
+                                    {{ trans('shop::messages.actions.subscribe') }}
+                                </button>
+                            </form>
+                        @endif
+                    @elseif($package->isInCart())
+                        <form action="{{ route('shop.cart.remove', $package) }}" method="POST" class="form-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-primary">
+                                {{ trans('messages.actions.remove') }}
+                            </button>
+                        </form>
+                    @elseif($package->getMaxQuantity() < 1)
+                        {{ trans('shop::messages.packages.limit') }}
+                    @elseif(! $package->hasBoughtRequirements())
+                        {{ trans('shop::messages.packages.requirements') }}
+                    @else
+                        <form action="{{ route('shop.packages.buy', $package) }}" method="POST" class="row row-cols-lg-auto g-0 gy-2 align-items-center">
+                            @csrf
+
+                            @if($package->custom_price)
+                                <label for="price">{{ trans('shop::messages.fields.price') }}</label>
+
+                                <div class="mx-3">
+                                    <input type="number" min="{{ $package->getPrice() }}" size="5" class="form-control" name="price" id="price" value="{{ $package->price }}">
+                                </div>
+                            @endif
+
+                            @if($package->has_quantity)
+                                <label for="quantity">{{ trans('shop::messages.fields.quantity') }}</label>
+
+                                <div class="mx-3">
+                                    <input type="number" min="1" max="{{ $package->getMaxQuantity() }}" size="5" class="form-control" name="quantity" id="quantity" value="1" required>
+                                </div>
+                            @endif
+
+                            <button type="submit" class="btn btn-primary">
+                                {{ trans('shop::messages.buy') }}
+                            </button>
+                        </form>
+                    @endif
+
+                    <form action="{{ route('shop.guest.logout') }}" method="POST" class="mt-3">
+                        @csrf
+                        <button type="submit" class="btn btn-secondary btn-sm">{{ trans('shop::messages.guest.logout') }}</button>
+                    </form>
+                @else
+                    <form action="{{ route('shop.guest') }}" method="POST" class="input-group">
+                        @csrf
+                        <input type="text" name="name" class="form-control" placeholder="{{ trans('shop::messages.guest.name') }}" required>
+                        <button type="submit" class="btn btn-primary">{{ trans('shop::messages.guest.submit') }}</button>
+                    </form>
+                @endif
             @endauth
         </div>
     </div>

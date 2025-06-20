@@ -106,12 +106,15 @@ class PaymentManager
 
     public static function createPayment(Cart $cart, float $price, string $currency, string $gatewayId, ?string $paymentId = null): Payment
     {
+        $userId = request()->session()->get('shop.guest_user_id');
+
         $payment = Payment::create([
             'price' => $price,
             'currency' => $currency,
             'gateway_type' => $gatewayId,
             'status' => 'pending',
             'transaction_id' => $paymentId,
+            'user_id' => $userId,
         ]);
 
         foreach ($cart->content() as $item) {
