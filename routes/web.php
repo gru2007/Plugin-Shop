@@ -30,11 +30,11 @@ Route::resource('categories', CategoryController::class)->only('show')->scoped([
 
 Route::resource('packages', PackageController::class)->only('show');
 
-Route::prefix('packages/{package}')->name('packages.')->middleware('auth')->group(function () {
+Route::prefix('packages/{package}')->name('packages.')->group(function () {
     Route::post('/buy', [PackageController::class, 'buy'])->name('buy');
     Route::get('/options', [PackageController::class, 'showVariables']);
     Route::post('/options', [PackageController::class, 'buy'])->name('variables');
-    Route::get('/files/{file}', [PackageController::class, 'downloadFile'])->name('file');
+    Route::get('/files/{file}', [PackageController::class, 'downloadFile'])->middleware('auth')->name('file');
 });
 
 Route::prefix('offers')->name('offers.')->middleware('verified')->group(function () {
@@ -43,7 +43,7 @@ Route::prefix('offers')->name('offers.')->middleware('verified')->group(function
     Route::post('/{offer:id}/{gateway:type}', [OfferController::class, 'pay'])->name('pay');
 });
 
-Route::prefix('cart')->name('cart.')->middleware('auth')->group(function () {
+Route::prefix('cart')->name('cart.')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::post('/', [CartController::class, 'update'])->name('update');
     // TODO Match multiple methods is not really good here...

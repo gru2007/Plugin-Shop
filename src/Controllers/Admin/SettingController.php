@@ -34,6 +34,7 @@ class SettingController extends Controller
             'enableHome' => setting('shop.home.enabled', true),
             'homeMessage' => setting('shop.home', ''),
             'termsRequired' => old('terms_required', setting('shop.required_terms') !== null),
+            'cartAuth' => setting('shop.cart_auth', false),
         ]);
     }
 
@@ -65,6 +66,7 @@ class SettingController extends Controller
             'shop.webhook' => $request->input('webhook'),
             'shop.home' => $request->input('home_message'),
             'shop.home.enabled' => $request->has('enable_home'),
+            'shop.cart_auth' => $request->has('cart_auth'),
             'shop.commands' => is_array($commands) ? json_encode($commands) : null,
             'shop.required_terms' => $request->filled('terms_required') ? $request->input('terms') : null,
         ]);
