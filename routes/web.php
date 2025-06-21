@@ -9,6 +9,7 @@ use Azuriom\Plugin\Shop\Controllers\PackageController;
 use Azuriom\Plugin\Shop\Controllers\PaymentController;
 use Azuriom\Plugin\Shop\Controllers\ProfileController;
 use Azuriom\Plugin\Shop\Controllers\SubscriptionController;
+use Azuriom\Plugin\Shop\Controllers\CartAuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -46,6 +47,7 @@ Route::prefix('offers')->name('offers.')->middleware('verified')->group(function
 Route::prefix('cart')->name('cart.')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::post('/', [CartController::class, 'update'])->name('update');
+    Route::post('/register', [CartAuthController::class, 'register'])->name('register');
     // TODO Match multiple methods is not really good here...
     Route::match(['GET', 'POST'], '/remove/{package}', [CartController::class, 'remove'])->name('remove');
     Route::post('/clear', [CartController::class, 'clear'])->name('clear');

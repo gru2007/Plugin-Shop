@@ -35,6 +35,7 @@ class SettingController extends Controller
             'homeMessage' => setting('shop.home', ''),
             'termsRequired' => old('terms_required', setting('shop.required_terms') !== null),
             'cartAuth' => setting('shop.cart_auth', false),
+            'emailVerification' => setting('shop.email_verification', true),
         ]);
     }
 
@@ -67,6 +68,7 @@ class SettingController extends Controller
             'shop.home' => $request->input('home_message'),
             'shop.home.enabled' => $request->has('enable_home'),
             'shop.cart_auth' => $request->has('cart_auth'),
+            'shop.email_verification' => $request->has('email_verification'),
             'shop.commands' => is_array($commands) ? json_encode($commands) : null,
             'shop.required_terms' => $request->filled('terms_required') ? $request->input('terms') : null,
         ]);

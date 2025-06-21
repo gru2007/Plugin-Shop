@@ -32,7 +32,7 @@
             </div>
             <div class="col-md-6 mb-3">
                 <h5>Регистрация</h5>
-                <form method="POST" action="{{ route('register') }}" id="cart-register">
+                <form method="POST" action="{{ route('shop.cart.register') }}" id="cart-register">
                     @csrf
                     <div class="mb-3">
                         <label class="form-label" for="register-name">Имя</label>
