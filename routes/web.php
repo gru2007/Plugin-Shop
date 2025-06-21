@@ -29,8 +29,10 @@ Route::resource('categories', CategoryController::class)->only('show')->scoped([
     'category' => 'slug',
 ]);
 
-Route::get('/nickname-login', [GuestController::class, 'showForm'])->name('nickname.form');
-Route::post('/nickname-login', [GuestController::class, 'login'])->name('nickname.login');
+Route::middleware('guest')->group(function () {
+    Route::get('/nickname-login', [GuestController::class, 'showForm'])->name('nickname.form');
+    Route::post('/nickname-login', [GuestController::class, 'login'])->name('nickname.login');
+});
 
 Route::resource('packages', PackageController::class)->only('show');
 

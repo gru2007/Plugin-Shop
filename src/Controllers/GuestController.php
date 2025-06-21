@@ -16,6 +16,11 @@ class GuestController extends Controller
      */
     public function showForm()
     {
+        // Если пользователь уже вошёл, перенаправляем его в магазин
+        if (auth()->check()) {
+            return redirect()->route('shop.home');
+        }
+
         return view('shop::nickname_login');
     }
 
@@ -24,6 +29,11 @@ class GuestController extends Controller
      */
     public function login(Request $request)
     {
+        // Уже авторизованных пользователей сразу отправляем в магазин
+        if (auth()->check()) {
+            return redirect()->route('shop.home');
+        }
+
         $this->validate($request, [
             'nickname' => ['required', 'string', 'max:255'],
         ]);

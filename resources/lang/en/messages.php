@@ -153,6 +153,7 @@ return [
 
     'nickname_login' => [
         'title' => 'Guest checkout',
+        'description' => 'Enter your nickname to continue shopping without an account.',
         'button' => 'Continue to shop',
     ],
 ];

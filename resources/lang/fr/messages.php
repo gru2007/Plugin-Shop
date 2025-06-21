@@ -153,6 +153,7 @@ return [
 
     'nickname_login' => [
         'title' => 'Achat invité',
+        'description' => 'Entrez votre pseudo pour continuer vos achats sans compte.',
         'button' => 'Aller à la boutique',
     ],
 ];
