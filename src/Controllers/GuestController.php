@@ -18,7 +18,8 @@ class GuestController extends Controller
     {
         // Если пользователь уже вошёл, перенаправляем его в магазин
         if (auth()->check()) {
-            return redirect()->route('shop.home');
+            // После авторизации сразу отправляем пользователя на страницу магазина
+            return to_route('shop.home');
         }
 
         return view('shop::nickname_login');
@@ -31,7 +32,8 @@ class GuestController extends Controller
     {
         // Уже авторизованных пользователей сразу отправляем в магазин
         if (auth()->check()) {
-            return redirect()->route('shop.home');
+            // Если пользователь уже авторизован, просто перенаправляем его в магазин
+            return to_route('shop.home');
         }
 
         $this->validate($request, [
@@ -42,7 +44,8 @@ class GuestController extends Controller
 
         auth()->login($user);
 
-        return redirect()->route('shop.home');
+        // После авторизации переходим на страницу магазина
+        return to_route('shop.home');
     }
 
     /**
