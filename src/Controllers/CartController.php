@@ -29,6 +29,9 @@ class CartController extends Controller
         return view('shop::cart.index', [
             'cart' => Cart::fromSession($request->session()),
             'terms' => $terms,
+            // Передаем настройки капчи для форм авторизации и регистрации
+            'captchaLogin' => (bool) setting('captcha.login'),
+            'captchaRegister' => setting('captcha.type') !== null,
         ]);
     }
 
