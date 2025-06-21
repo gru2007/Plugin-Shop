@@ -43,6 +43,9 @@ class ShopServiceProvider extends BasePluginServiceProvider
      */
     public function boot(): void
     {
+        // Регистрируем middleware, разрешающий гостевые покупки
+        app('router')->aliasMiddleware('shop.guest-checkout', \Azuriom\Plugin\Shop\Http\Middleware\GuestCheckout::class);
+
         $this->registerPolicies();
 
         $this->loadViews();

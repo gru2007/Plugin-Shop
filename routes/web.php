@@ -32,7 +32,7 @@ Route::resource('packages', PackageController::class)->only('show');
 
 Route::prefix('packages/{package}')
     ->name('packages.')
-    ->middleware(setting('shop.guest_checkout', false) ? [] : 'auth')
+    ->middleware('shop.guest-checkout')
     ->group(function () {
     Route::post('/buy', [PackageController::class, 'buy'])->name('buy');
     Route::get('/options', [PackageController::class, 'showVariables']);
@@ -46,10 +46,10 @@ Route::prefix('offers')->name('offers.')->middleware('verified')->group(function
     Route::post('/{offer:id}/{gateway:type}', [OfferController::class, 'pay'])->name('pay');
 });
 
-// Группа маршрутов корзины. При включенной гостевой покупке убираем требование авторизации
+// Группа маршрутов корзины. Используем middleware с возможностью гостевой покупки
 Route::prefix('cart')
     ->name('cart.')
-    ->middleware(setting('shop.guest_checkout', false) ? [] : 'auth')
+    ->middleware('shop.guest-checkout')
     ->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::post('/', [CartController::class, 'update'])->name('update');
@@ -58,7 +58,7 @@ Route::prefix('cart')
     Route::post('/clear', [CartController::class, 'clear'])->name('clear');
     Route::post('/payment', [CartController::class, 'payment'])
         ->name('payment')
-        ->middleware(setting('shop.guest_checkout', false) ? [] : 'auth');
+        ->middleware('shop.guest-checkout');
 
     Route::prefix('coupons')->name('coupons.')->group(function () {
         Route::post('/add', [CouponController::class, 'add'])->name('add');
@@ -83,7 +83,7 @@ Route::prefix('subscriptions')->name('subscriptions.')->group(function () {
 
 // Маршруты платежей. Для гостевых покупок авторизация не требуется
 Route::prefix('payments')->name('payments.')->group(function () {
-    Route::middleware(setting('shop.guest_checkout', false) ? [] : ['auth', 'verified'])->group(function () {
+    Route::middleware(setting('shop.guest_checkout', false) ? 'shop.guest-checkout' : ['auth', 'verified'])->group(function () {
         Route::get('/payment', [PaymentController::class, 'payment'])->name('payment');
         Route::post('/{gateway:type}/pay', [PaymentController::class, 'pay'])->name('pay');
     });
