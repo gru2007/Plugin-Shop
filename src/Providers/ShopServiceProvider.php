@@ -123,6 +123,7 @@ class ShopServiceProvider extends BasePluginServiceProvider
     {
         return [
             'shop.home' => trans('shop::messages.title'),
+            'shop.nickname.form' => trans('shop::messages.nickname_login.title'),
         ];
     }
 

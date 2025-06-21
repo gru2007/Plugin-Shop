@@ -6,6 +6,7 @@ use Azuriom\Plugin\Shop\Controllers\CouponController;
 use Azuriom\Plugin\Shop\Controllers\GiftcardController;
 use Azuriom\Plugin\Shop\Controllers\OfferController;
 use Azuriom\Plugin\Shop\Controllers\PackageController;
+use Azuriom\Plugin\Shop\Controllers\GuestController;
 use Azuriom\Plugin\Shop\Controllers\PaymentController;
 use Azuriom\Plugin\Shop\Controllers\ProfileController;
 use Azuriom\Plugin\Shop\Controllers\SubscriptionController;
@@ -27,6 +28,9 @@ Route::get('/', [CategoryController::class, 'index'])->name('home');
 Route::resource('categories', CategoryController::class)->only('show')->scoped([
     'category' => 'slug',
 ]);
+
+Route::get('/nickname-login', [GuestController::class, 'showForm'])->name('nickname.form');
+Route::post('/nickname-login', [GuestController::class, 'login'])->name('nickname.login');
 
 Route::resource('packages', PackageController::class)->only('show');
 

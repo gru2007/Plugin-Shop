@@ -150,4 +150,9 @@ return [
         'notification' => 'You received a giftcard, the code is :code (:balance).',
         'pending' => 'A payment has already started for this giftcard. Complete the payment or wait a few minutes.',
     ],
+
+    'nickname_login' => [
+        'title' => 'Guest checkout',
+        'button' => 'Continue to shop',
+    ],
 ];

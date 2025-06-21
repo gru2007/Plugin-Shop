@@ -4,7 +4,7 @@ return [
     'title' => 'Магазин',
     'welcome' => 'Добро пожаловать в магазин!',
 
-    'buy' => 'Buy',
+    'buy' => 'Купить',
 
     'free' => 'Free',
 
@@ -149,5 +149,10 @@ return [
         'add' => 'Add a gift card',
         'notification' => 'You received a giftcard, the code is :code (:balance).',
         'pending' => 'A payment has already started for this giftcard. Complete the payment or wait a few minutes.',
+    ],
+
+    'nickname_login' => [
+        'title' => 'Покупка без регистрации',
+        'button' => 'Перейти в магазин',
     ],
 ];

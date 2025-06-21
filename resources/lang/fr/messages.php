@@ -150,4 +150,9 @@ return [
         'notification' => 'Vous avez reçu une carte cadeau, son code est : :code (:balance).',
         'pending' => 'Un paiement est déjà en cours pour cette carte cadeau. Complétez le paiement ou attendez un peu.',
     ],
+
+    'nickname_login' => [
+        'title' => 'Achat invité',
+        'button' => 'Aller à la boutique',
+    ],
 ];
