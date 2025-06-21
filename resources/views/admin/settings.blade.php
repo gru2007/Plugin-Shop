@@ -87,6 +87,13 @@
                 </div>
 
                 <div class="mb-3">
+                    <div class="form-check form-switch">
+                        <input type="checkbox" class="form-check-input" id="guestCheckout" name="guest_checkout" @checked($guestCheckout)>
+                        <label class="form-check-label" for="guestCheckout">{{ trans('shop::admin.settings.guest_checkout') }}</label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label">{{ trans('shop::admin.settings.commands') }}</label>
 
                     @include('shop::admin.commands._form', ['commands' => $commands])

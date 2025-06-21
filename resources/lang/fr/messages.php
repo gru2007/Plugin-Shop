@@ -44,6 +44,7 @@ return [
         'total' => 'Total',
         'user_id' => 'ID de l\'utilisateur',
         'user_limit' => 'Limite d\'achats par utilisateur',
+        'nickname' => 'Pseudo',
     ],
 
     'actions' => [
@@ -70,6 +71,7 @@ return [
         'title' => 'Panier',
         'success' => 'Votre achat a été effectué avec succès.',
         'guest' => 'Vous devez être connecté pour effectuer un achat.',
+        'ask_nickname' => 'Entrez votre pseudo pour acheter sans compte.',
         'empty' => 'Votre panier est vide.',
         'checkout' => 'Procéder au paiement',
         'clear' => 'Vider le panier',
@@ -147,5 +149,11 @@ return [
         'add' => 'Utiliser une carte cadeau',
         'notification' => 'Vous avez reçu une carte cadeau, son code est : :code (:balance).',
         'pending' => 'Un paiement est déjà en cours pour cette carte cadeau. Complétez le paiement ou attendez un peu.',
+    ],
+
+    'nickname_login' => [
+        'title' => 'Achat invité',
+        'description' => 'Entrez votre pseudo pour continuer vos achats sans compte.',
+        'button' => 'Aller à la boutique',
     ],
 ];

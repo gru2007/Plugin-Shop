@@ -15,7 +15,7 @@ use Illuminate\Validation\Rule;
 class SettingController extends Controller
 {
     /**
-     * Display the shop settings.
+     * Отобразить настройки магазина.
      */
     public function show()
     {
@@ -28,6 +28,7 @@ class SettingController extends Controller
             'topCustomer' => setting('shop.top_customer', false),
             'recentPayments' => (int) setting('shop.recent_payments', 0),
             'displayAmount' => setting('shop.display_amount', true),
+            'guestCheckout' => setting('shop.guest_checkout', false),
             'commands' => $commands ? json_decode($commands) : [],
             'commandTriggers' => Package::COMMAND_TRIGGERS,
             'servers' => Server::executable()->get()->pluck('name', 'id'),
@@ -38,7 +39,7 @@ class SettingController extends Controller
     }
 
     /**
-     * Update the shop settings.
+     * Сохранить настройки магазина.
      *
      * @throws \Illuminate\Validation\ValidationException
      */
@@ -62,6 +63,7 @@ class SettingController extends Controller
             'shop.recent_payments' => $request->input('recent_payments'),
             'shop.top_customer' => $request->filled('top_customer'),
             'shop.display_amount' => $request->filled('display_amount'),
+            'shop.guest_checkout' => $request->filled('guest_checkout'),
             'shop.webhook' => $request->input('webhook'),
             'shop.home' => $request->input('home_message'),
             'shop.home.enabled' => $request->has('enable_home'),

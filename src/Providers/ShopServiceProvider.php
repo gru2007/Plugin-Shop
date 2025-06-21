@@ -39,10 +39,16 @@ class ShopServiceProvider extends BasePluginServiceProvider
     }
 
     /**
-     * Bootstrap any plugin services.
+     * Загрузка сервисов плагина.
      */
     public function boot(): void
     {
+        // Регистрируем middleware, разрешающий гостевые покупки
+        app('router')->aliasMiddleware('shop.guest-checkout', \Azuriom\Plugin\Shop\Http\Middleware\GuestCheckout::class);
+        // Middleware блокирует смену данных гостевыми аккаунтами
+        app('router')->aliasMiddleware('shop.block-guest-profile', \Azuriom\Plugin\Shop\Http\Middleware\BlockGuestProfileUpdates::class);
+        app('router')->pushMiddlewareToGroup('web', 'shop.block-guest-profile');
+
         $this->registerPolicies();
 
         $this->loadViews();
@@ -120,6 +126,7 @@ class ShopServiceProvider extends BasePluginServiceProvider
     {
         return [
             'shop.home' => trans('shop::messages.title'),
+            'shop.nickname.form' => trans('shop::messages.nickname_login.title'),
         ];
     }
 

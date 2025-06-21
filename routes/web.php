@@ -6,6 +6,7 @@ use Azuriom\Plugin\Shop\Controllers\CouponController;
 use Azuriom\Plugin\Shop\Controllers\GiftcardController;
 use Azuriom\Plugin\Shop\Controllers\OfferController;
 use Azuriom\Plugin\Shop\Controllers\PackageController;
+use Azuriom\Plugin\Shop\Controllers\GuestController;
 use Azuriom\Plugin\Shop\Controllers\PaymentController;
 use Azuriom\Plugin\Shop\Controllers\ProfileController;
 use Azuriom\Plugin\Shop\Controllers\SubscriptionController;
@@ -28,9 +29,17 @@ Route::resource('categories', CategoryController::class)->only('show')->scoped([
     'category' => 'slug',
 ]);
 
+Route::middleware('guest')->group(function () {
+    Route::get('/nickname-login', [GuestController::class, 'showForm'])->name('nickname.form');
+    Route::post('/nickname-login', [GuestController::class, 'login'])->name('nickname.login');
+});
+
 Route::resource('packages', PackageController::class)->only('show');
 
-Route::prefix('packages/{package}')->name('packages.')->middleware('auth')->group(function () {
+Route::prefix('packages/{package}')
+    ->name('packages.')
+    ->middleware('shop.guest-checkout')
+    ->group(function () {
     Route::post('/buy', [PackageController::class, 'buy'])->name('buy');
     Route::get('/options', [PackageController::class, 'showVariables']);
     Route::post('/options', [PackageController::class, 'buy'])->name('variables');
@@ -43,13 +52,19 @@ Route::prefix('offers')->name('offers.')->middleware('verified')->group(function
     Route::post('/{offer:id}/{gateway:type}', [OfferController::class, 'pay'])->name('pay');
 });
 
-Route::prefix('cart')->name('cart.')->middleware('auth')->group(function () {
+// Группа маршрутов корзины. Используем middleware с возможностью гостевой покупки
+Route::prefix('cart')
+    ->name('cart.')
+    ->middleware('shop.guest-checkout')
+    ->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::post('/', [CartController::class, 'update'])->name('update');
     // TODO Match multiple methods is not really good here...
     Route::match(['GET', 'POST'], '/remove/{package}', [CartController::class, 'remove'])->name('remove');
     Route::post('/clear', [CartController::class, 'clear'])->name('clear');
-    Route::post('/payment', [CartController::class, 'payment'])->name('payment')->middleware('auth');
+    Route::post('/payment', [CartController::class, 'payment'])
+        ->name('payment')
+        ->middleware('shop.guest-checkout');
 
     Route::prefix('coupons')->name('coupons.')->group(function () {
         Route::post('/add', [CouponController::class, 'add'])->name('add');
@@ -72,8 +87,9 @@ Route::prefix('subscriptions')->name('subscriptions.')->group(function () {
     Route::delete('/{subscription}', [SubscriptionController::class, 'cancel'])->middleware('auth')->name('destroy');
 });
 
+// Маршруты платежей. Для гостевых покупок авторизация не требуется
 Route::prefix('payments')->name('payments.')->group(function () {
-    Route::middleware(['auth', 'verified'])->group(function () {
+    Route::middleware(setting('shop.guest_checkout', false) ? 'shop.guest-checkout' : ['auth', 'verified'])->group(function () {
         Route::get('/payment', [PaymentController::class, 'payment'])->name('payment');
         Route::post('/{gateway:type}/pay', [PaymentController::class, 'pay'])->name('pay');
     });

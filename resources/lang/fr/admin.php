@@ -238,6 +238,7 @@ return [
         'commands' => 'Commandes globales',
         'recent_payments' => 'Limite de paiements récents à afficher dans la barre latérale',
         'display_amount' => 'Afficher le montant dans les paiements récents et meilleur acheteur',
+        'guest_checkout' => 'Autoriser les achats sans compte',
         'top_customer' => 'Afficher le meilleur acheteur du mois dans la barre latérale',
 
         'terms_required' => 'Demander aux utilisateurs d\'accepter les conditions avant un achat',
