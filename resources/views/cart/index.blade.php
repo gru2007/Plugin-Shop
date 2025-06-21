@@ -19,9 +19,9 @@
 
     <div class="card">
         <div class="card-body">
-            @guest
+            @if(auth()->guest() && setting('shop.cart_auth'))
                 @include('shop::cart._auth')
-            @endguest
+            @endif
             @if(! $cart->isEmpty())
                 <form action="{{ route('shop.cart.update') }}" method="POST">
                     @csrf

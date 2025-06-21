@@ -40,6 +40,15 @@ class PackageController extends Controller
      */
     public function buy(Request $request, Package $package)
     {
+        // Если гостевая корзина отключена, требуем авторизацию
+        if (!setting('shop.cart_auth', false) && auth()->guest()) {
+            return redirect()->route('login');
+        }
+
+        if (auth()->guest()) {
+            $request->session()->put('url.intended', route('shop.cart.index'));
+        }
+
         $this->validate($request, [
             'quantity' => 'nullable|integer',
             'price' => 'sometimes|nullable|numeric|min:'.$package->price,
