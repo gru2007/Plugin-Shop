@@ -15,7 +15,7 @@ use Illuminate\Validation\Rule;
 class SettingController extends Controller
 {
     /**
-     * Display the shop settings.
+     * Отобразить настройки магазина.
      */
     public function show()
     {
@@ -39,7 +39,7 @@ class SettingController extends Controller
     }
 
     /**
-     * Update the shop settings.
+     * Сохранить настройки магазина.
      *
      * @throws \Illuminate\Validation\ValidationException
      */

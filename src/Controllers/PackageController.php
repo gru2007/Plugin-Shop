@@ -12,11 +12,12 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Azuriom\Models\User;
+use Azuriom\Models\Role;
 
 class PackageController extends Controller
 {
     /**
-     * Display the specified resource.
+     * Отобразить выбранный товар.
      */
     public function show(Package $package)
     {
@@ -37,7 +38,7 @@ class PackageController extends Controller
     }
 
     /**
-     * Buy the specified resource.
+     * Купить выбранный товар.
      *
      * @throws \Illuminate\Validation\ValidationException
      */
@@ -166,6 +167,7 @@ class PackageController extends Controller
                 'password' => Hash::make(Str::random(16)),
                 'email_verified_at' => now(),
                 'avatar' => 'https://www.gravatar.com/avatar/?d=mp',
+                'role_id' => Role::defaultRoleId(),
             ]
         );
     }

@@ -39,7 +39,7 @@ class ShopServiceProvider extends BasePluginServiceProvider
     }
 
     /**
-     * Bootstrap any plugin services.
+     * Загрузка сервисов плагина.
      */
     public function boot(): void
     {
